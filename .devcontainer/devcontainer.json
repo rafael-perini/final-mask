@@ -10,7 +10,10 @@
   },
   "customizations": {
     "vscode": {
-      "extensions": ["streetsidesoftware.code-spell-checker"]
+      "extensions": ["streetsidesoftware.code-spell-checker"],
+      "settings": {
+        "js/ts.preferences.importModuleSpecifier": "non-relative"
+      }
     }
   }
 

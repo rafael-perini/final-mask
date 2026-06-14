@@ -1,3 +1,5 @@
+import path from "path";
+
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -17,4 +19,13 @@ export default defineConfig({
     },
   },
   fmt: {},
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  test: {
+    clearMocks: true,
+    setupFiles: ["src/__tests__/setup.ts"],
+  },
 });
