@@ -1,4 +1,3 @@
-import { expect, describe, it } from "vite-plus/test";
 import Formatter from "@/utils/format/formatter.ts";
 
 describe("Formatter", () => {
