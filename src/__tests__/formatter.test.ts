@@ -1,7 +1,7 @@
 import { expect, describe, it } from "vite-plus/test";
 import Formatter from "../formatter.ts";
 
-describe("formatter", () => {
+describe("Formatter", () => {
   const mask = "+## (##) ####-####";
   const formatter = new Formatter(mask);
 
@@ -25,11 +25,11 @@ describe("formatter", () => {
       expect(value).toBe(maskedPhone);
 
       const partiallyMaskedPhone = "+55 (11) 1224-1426";
-      const value = formatter.mask(partialllyMaskedPhone);
-      expect(value).toBe(maskedPhone);
+      const partialValue = formatter.mask(partiallyMaskedPhone);
+      expect(partialValue).toBe(maskedPhone);
     });
 
-    it.todo(" should be abble to format partial values", () => {
+    it(" should be abble to format partial values", () => {
       const maskedPhone = "+55 (11) 1224";
       const unmaskedPhone = "55111224";
 
