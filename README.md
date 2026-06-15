@@ -1,8 +1,16 @@
-# vite-plus-starter
+# Final-Mask
 
-A starter for creating a Vite Plus project.
+<!-- TODO: add badges and links do home page -->
 
-## Development
+A vanilla, third party dependencies free, browser friendly, input mask library.
+
+<!--## Demo
+TODO: add link to pages -->
+
+<!--## Getting Started
+
+TODO: add instructions
+
 
 - Install dependencies:
 
@@ -21,3 +29,12 @@ vp test
 ```bash
 vp pack
 ```
+-->
+
+<!-- ## Contributing
+
+TODO: add link to CONTRIBUTING file...or sponsors, maybe? -->
+
+<!-- ## Roadmap
+
+TODO: add link to... GitHub projects, maybe? -->
