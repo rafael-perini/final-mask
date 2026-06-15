@@ -46,6 +46,7 @@
     "@typescript/native-preview": "7.0.0-dev.20260509.2",
     "@vitest/coverage-v8": "^4.1.8",
     "bumpp": "^11.1.0",
+    "jsdom": "^29.1.1",
     "typescript": "^6.0.3",
     "vite-plus": "^0.1.24"
   },
