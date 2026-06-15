@@ -1,3 +1,1 @@
-export function fn() {
-  return "Hello, tsdown!";
-}
+export { default as FinalMask } from "@/utils/input/mask.ts";
