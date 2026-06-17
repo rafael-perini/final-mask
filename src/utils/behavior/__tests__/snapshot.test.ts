@@ -6,10 +6,13 @@ describe("Snapshot", () => {
   describe("insert", () => {
     it("should record some value", () => {
       const secondValue = "123";
-      recorder.insert(secondValue);
+      const thirdValue = "456";
 
-      expect(recorder.undo()).toBe("");
-      expect(recorder.redo()).toBe(secondValue);
+      recorder.insert(secondValue);
+      expect(recorder.getValue()).toBe(secondValue);
+
+      recorder.insert(thirdValue);
+      expect(recorder.getValue()).toBe(thirdValue);
     });
   });
 
