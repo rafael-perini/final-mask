@@ -1,4 +1,4 @@
-export default class Debounce<T extends (...args: unknown[]) => unknown> {
+export default class Debounce<T extends (...args: Parameters<T>) => ReturnType<T>> {
   private _function: T;
   private _timeout: number;
   private _timerId?: ReturnType<typeof setTimeout>;
