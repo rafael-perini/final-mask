@@ -14,11 +14,15 @@ export default class Snapshot<T> {
 
   undo(): T {
     this._pointer--;
-    return this._history[this._pointer];
+    return this.getValue();
   }
 
   redo(): T {
     this._pointer++;
+    return this.getValue();
+  }
+
+  getValue(): T {
     return this._history[this._pointer];
   }
 }
