@@ -1,35 +1,43 @@
 import Mask from "@/utils/input/mask.ts";
 
 describe("Mask", () => {
-  const h1 = document.createElement("h1");
-  h1.innerText = "Test Title";
-  document.body.append(h1);
-
-  const id = "test-input";
-  const input = document.createElement("input");
-  input.id = id;
-  document.body.append(input);
-
   const finalMask = new Mask("##.###.###/####-##");
 
+  const input = appendInput();
+  finalMask.init(input);
+
   describe("init", () => {
-    it("should mask the inserted element value", () => {
+    it("should mask the inserted value", () => {
       const expectedValue = "12.345.678/9012-34";
-
-      finalMask.init(input);
-
-      input.value = expectedValue.replace(/\D/g, "");
-      input.dispatchEvent(new InputEvent("input", { inputType: "insertText" }));
-
+      const unmaskedValue = "12345678901234";
+      setValue(input, unmaskedValue);
       expect(input.value).toBe(expectedValue);
     });
 
-    it.todo("should handle deletions");
+    it("should handle deletions", () => {
+      const firstValue = "12.345.678/9012-34";
+      setValue(input, "12345678901234");
+      expect(input.value).toBe(firstValue);
+
+      const secondValue = "12.345.678/9";
+      setValue(input, "123456789");
+      expect(input.value).toBe(secondValue);
+
+      deleteBackward(input);
+      expect(input.value).toBe("12.345.678");
+
+      deleteBackward(input);
+      deleteBackward(input);
+      expect(input.value).toBe("12.345.6");
+
+      deleteForward(input);
+      expect(input.value).toBe("23.456");
+    });
+
     it.todo("should handle undo and redo");
     it.todo("should handle selection positioning");
-    it.todo("should call previous input listeners");
 
-    it("should warn when the provided element isn't an input type text", () => {
+    it("should warn if the provided element isn't an input type text", () => {
       expect(console.warn).not.toHaveBeenCalled();
 
       const selector = "not-and-input";
@@ -40,6 +48,7 @@ describe("Mask", () => {
         `[final-mask]: Failed to find the associated input element for: ${selector}`,
       );
 
+      const h1 = appendH1();
       const h1Selector = "h1";
       finalMask.init(h1Selector);
 
@@ -48,7 +57,6 @@ describe("Mask", () => {
         `[final-mask]: Associated input element for "${h1Selector}" is not an input`,
       );
 
-      const h1 = document.querySelector<HTMLHeadingElement>("h1");
       finalMask.init(h1 as HTMLInputElement);
 
       expect(console.warn).toHaveBeenCalledTimes(3);
@@ -61,3 +69,36 @@ describe("Mask", () => {
   describe.todo("getUnmaskedValue");
   describe.todo("getMaskedValue");
 });
+
+function appendH1() {
+  const h1 = document.createElement("h1");
+  h1.innerText = "Test Title";
+  document.body.append(h1);
+  return h1;
+}
+
+let counter = 0;
+function appendInput() {
+  const id = `test-input-${counter++}`;
+  const input = document.createElement("input");
+  input.id = id;
+  document.body.append(input);
+  return input;
+}
+
+function setValue(input: HTMLInputElement, value: string) {
+  input.value = value;
+  input.dispatchEvent(new InputEvent("input", { inputType: "insertText" }));
+}
+
+function deleteBackward(input: HTMLInputElement) {
+  const value = input.value;
+  input.value = value.substring(0, value.length - 1);
+  input.dispatchEvent(new InputEvent("input", { inputType: "deleteContentBackward" }));
+}
+
+function deleteForward(input: HTMLInputElement) {
+  const value = input.value;
+  input.value = value.substring(1, value.length);
+  input.dispatchEvent(new InputEvent("input", { inputType: "deleteContentForward" }));
+}
