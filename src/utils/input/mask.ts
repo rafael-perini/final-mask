@@ -1,5 +1,9 @@
 import Formatter from "@/utils/format/formatter.ts";
 
+interface initOptions {
+  onInput?: (e?: InputEvent) => unknown;
+}
+
 export default class Mask {
   private _formatter: Formatter;
 
@@ -7,7 +11,7 @@ export default class Mask {
     this._formatter = new Formatter(...args);
   }
 
-  init(selectorOrElement: string | HTMLInputElement) {
+  init(selectorOrElement: string | HTMLInputElement, options: initOptions = {}) {
     const input = this.toHTMLInputElement(selectorOrElement);
     if (!input) {
       return console.warn(
@@ -21,7 +25,10 @@ export default class Mask {
       );
     }
 
-    input.oninput = (event) => this.handleInput(event);
+    input.oninput = (event) => {
+      this.handleInput(event);
+      options.onInput?.(event);
+    };
   }
 
   private handleInput(event: InputEvent) {
