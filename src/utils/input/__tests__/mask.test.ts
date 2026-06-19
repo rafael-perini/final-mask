@@ -4,7 +4,8 @@ describe("Mask", () => {
   const finalMask = new Mask("##.###.###/####-##");
 
   const input = appendInput();
-  finalMask.init(input);
+  const onInput = vi.fn();
+  finalMask.init(input, { onInput });
 
   describe("init", () => {
     it("should mask the inserted value", () => {
@@ -12,6 +13,20 @@ describe("Mask", () => {
       const unmaskedValue = "12345678901234";
       setValue(input, unmaskedValue);
       expect(input.value).toBe(expectedValue);
+    });
+
+    it("should be able to receive an input callback", () => {
+      const expectedValue = "12.678.345/9012-34";
+      const unmaskedValue = "12678345901234";
+      setValue(input, unmaskedValue);
+      expect(onInput).toHaveBeenCalledOnce();
+      expect(onInput).toHaveBeenCalledWith(expect.any(InputEvent));
+      expect(onInput).toHaveBeenCalledWith(expect.objectContaining({ target: input }));
+      expect(onInput).toHaveBeenCalledWith(
+        expect.objectContaining({
+          target: expect.objectContaining({ value: expectedValue }),
+        }),
+      );
     });
 
     it("should handle deletions", () => {
