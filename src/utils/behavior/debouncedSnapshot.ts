@@ -4,11 +4,12 @@ import Snapshot from "@/utils/behavior/snapshot.ts";
 export default class DebouncedSnapshot<T> extends Snapshot<T> {
   private _deboucedInsert: Debounce<Snapshot<T>["insert"]>;
 
-  constructor(...args: ConstructorParameters<typeof Snapshot<T>>) {
-    super(...args);
+  constructor(defaultValue: T, timeout?: number) {
+    super(defaultValue);
 
-    this._deboucedInsert = new Debounce((...args: Parameters<typeof this.insert>) =>
-      super.insert(...args),
+    this._deboucedInsert = new Debounce(
+      (...args: Parameters<typeof this.insert>) => super.insert(...args),
+      timeout,
     );
   }
 
