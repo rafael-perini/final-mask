@@ -28,6 +28,7 @@ export default defineConfig({
     globals: true,
     clearMocks: true,
     environment: "jsdom",
+    coverage: { reporter: ["text"] },
     setupFiles: ["src/__tests__/setup.ts"],
   },
 });
