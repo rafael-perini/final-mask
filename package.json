@@ -37,7 +37,10 @@
     "test": "vp test",
     "check": "vp check",
     "prepublishOnly": "vp run build",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.0.2",
@@ -48,7 +51,8 @@
     "bumpp": "^11.1.0",
     "jsdom": "^29.1.1",
     "typescript": "^6.0.3",
-    "vite-plus": "^0.1.24"
+    "vite-plus": "^0.1.24",
+    "vitepress": "2.0.0-alpha.17"
   },
   "packageManager": "pnpm@11.6.0"
 }
