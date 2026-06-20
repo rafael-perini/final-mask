@@ -3,11 +3,12 @@ import type { Mock } from "vite-plus/test";
 
 describe("Mask", () => {
   const onInput = vi.fn();
+  const onBeforeInput = vi.fn();
   let input = setupInput();
 
   describe("setup", () => {
     beforeEach(() => {
-      input = setupInput(onInput);
+      input = setupInput({ onInput, onBeforeInput });
     });
 
     it("should mask the inserted value", () => {
@@ -31,7 +32,19 @@ describe("Mask", () => {
       );
     });
 
-    it.todo("should be able to receive an before input callback");
+    it("should be able to receive a before input callback", () => {
+      const expectedValue = "34.126.783/4590-12";
+      const unmaskedValue = "34126783459012";
+      setValue(input, unmaskedValue);
+      expect(onBeforeInput).toHaveBeenCalledOnce();
+      expect(onBeforeInput).toHaveBeenCalledWith(expect.any(InputEvent));
+      expect(onBeforeInput).toHaveBeenCalledWith(expect.objectContaining({ target: input }));
+      expect(onBeforeInput).toHaveBeenCalledWith(
+        expect.objectContaining({
+          target: expect.objectContaining({ value: expectedValue }),
+        }),
+      );
+    });
 
     it("should handle deletions", () => {
       const firstValue = "12.345.678/9012-34";
@@ -185,15 +198,19 @@ describe("Mask", () => {
   describe.todo("getMaskedValue");
 });
 
-const mask = "##.###.###/####-##";
-function setupInput(onInput?: Mock) {
+interface SetupOptions {
+  onInput?: Mock;
+  onBeforeInput?: Mock;
+}
+function setupInput(options: SetupOptions = {}) {
   const input = appendInput();
-  setupMask(input, onInput);
+  setupMask(input, options);
   return input;
 }
 
-function setupMask(input: string | HTMLInputElement, onInput?: Mock) {
-  Mask.setup(mask, input, { onInput });
+const mask = "##.###.###/####-##";
+function setupMask(input: string | HTMLInputElement, options?: SetupOptions) {
+  Mask.setup(mask, input, options);
 }
 
 function appendH1() {
@@ -213,6 +230,7 @@ function appendInput() {
 }
 
 function setValue(input: HTMLInputElement, value: string) {
+  input.dispatchEvent(new InputEvent("beforeinput", { inputType: "insertText" }));
   input.value = value;
   input.dispatchEvent(new InputEvent("input", { inputType: "insertText" }));
 }
