@@ -32,6 +32,8 @@ export default class Mask {
       );
     }
 
+    input.onblur = (event) => this.handleBlur(event);
+
     input.onbeforeinput = (event) => {
       this.handleBeforeInput(event);
       options.onBeforeInput?.(event);
@@ -41,6 +43,12 @@ export default class Mask {
       this.handleInput(event);
       options.onInput?.(event);
     };
+  }
+
+  private handleBlur(event: FocusEvent) {
+    const input = event.target;
+    if (!this.isHTMLInputElement(input)) return;
+    if (!this.isFocused(input)) this.record(input.value);
   }
 
   private handleBeforeInput(event: InputEvent) {
@@ -76,6 +84,10 @@ export default class Mask {
 
   private isDeletionEvent(event: InputEvent) {
     return event.inputType.startsWith("delete");
+  }
+
+  private isFocused(element: HTMLElement) {
+    return element === document.activeElement;
   }
 
   private insertText(input: HTMLInputElement, text: string) {
