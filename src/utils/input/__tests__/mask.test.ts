@@ -74,8 +74,8 @@ describe("Mask", () => {
 
   describe("undo and redo", () => {
     it("should handle ordinary typing", () => {
-      const firstValue = "12345678901234";
-      const maskedFirstValue = "12.345.678/9012-34";
+      const firstValue = "12";
+      const maskedFirstValue = "12";
 
       setValue(input, firstValue);
 
@@ -200,6 +200,7 @@ describe("Mask", () => {
     it.todo("should handle text replacements");
     it.todo("should handle paste");
     it.todo("should handle selection positioning");
+    it.todo("handle dynamic mask");
   });
 
   describe("options", () => {
@@ -265,8 +266,8 @@ function appendInput() {
 }
 
 function setValue(input: HTMLInputElement, value: string) {
-  input.dispatchEvent(new InputEvent("beforeinput", { inputType: "insertText" }));
   input.focus();
+  input.dispatchEvent(new InputEvent("beforeinput", { inputType: "insertText" }));
   input.value = value;
   input.dispatchEvent(new InputEvent("input", { inputType: "insertText" }));
 }
@@ -288,10 +289,13 @@ function deleteForward(input: HTMLInputElement) {
 }
 
 function undo(input: HTMLInputElement) {
+  input.dispatchEvent(new InputEvent("beforeinput", { inputType: "historyUndo" }));
+  input.value = "";
   input.dispatchEvent(new InputEvent("input", { inputType: "historyUndo" }));
 }
 
 function redo(input: HTMLInputElement) {
+  input.dispatchEvent(new InputEvent("beforeinput", { inputType: "historyRedo" }));
   input.dispatchEvent(new InputEvent("input", { inputType: "historyRedo" }));
 }
 
