@@ -1,13 +1,15 @@
 import Mask from "@/utils/input/mask.ts";
+import type { Mock } from "vite-plus/test";
 
 describe("Mask", () => {
-  const finalMask = new Mask("##.###.###/####-##");
-
-  const input = appendInput();
   const onInput = vi.fn();
-  finalMask.init(input, { onInput });
+  let input = setupInput();
 
-  describe("init", () => {
+  describe("setup", () => {
+    beforeEach(() => {
+      input = setupInput(onInput);
+    });
+
     it("should mask the inserted value", () => {
       const expectedValue = "12.345.678/9012-34";
       const unmaskedValue = "12345678901234";
@@ -29,6 +31,8 @@ describe("Mask", () => {
       );
     });
 
+    it.todo("should be able to receive an before input callback");
+
     it("should handle deletions", () => {
       const firstValue = "12.345.678/9012-34";
       setValue(input, "12345678901234");
@@ -49,14 +53,110 @@ describe("Mask", () => {
       expect(input.value).toBe("23.456");
     });
 
-    it.todo("should handle undo and redo");
+    it("should handle undo and redo when there's just typing", () => {
+      const firstValue = "12345678901234";
+      const maskedFirstValue = "12.345.678/9012-34";
+
+      setValue(input, firstValue);
+
+      undo(input);
+      expect(input.value).toBe("");
+
+      redo(input);
+      expect(input.value).toBe(maskedFirstValue);
+
+      const secondValue = "123456789";
+      const maskedSecondValue = "12.345.678/9";
+
+      setValue(input, secondValue);
+
+      undo(input);
+      expect(input.value).toBe(maskedFirstValue);
+
+      redo(input);
+      expect(input.value).toBe(maskedSecondValue);
+
+      const thirdValue = "1235468793210";
+      const maskedThirdValue = "12.354.687/9321-0";
+
+      setValue(input, thirdValue);
+
+      undo(input);
+      expect(input.value).toBe(maskedSecondValue);
+
+      undo(input);
+      expect(input.value).toBe(maskedFirstValue);
+
+      undo(input);
+      expect(input.value).toBe("");
+
+      redo(input);
+      redo(input);
+      redo(input);
+      expect(input.value).toBe(maskedThirdValue);
+
+      undo(input);
+      undo(input);
+      undo(input);
+      expect(input.value).toBe("");
+    });
+
+    it("should handle undo and redo when a delete happens", () => {
+      const firstValue = "43210987654321";
+      const maskedFirstValue = "43.210.987/6543-21";
+
+      setValue(input, firstValue);
+      deleteBackward(input);
+
+      undo(input);
+      expect(input.value).toBe(maskedFirstValue);
+
+      redo(input);
+      expect(input.value).toBe("43.210.987/6543-2");
+
+      deleteBackward(input);
+      deleteBackward(input);
+      deleteForward(input);
+      deleteForward(input);
+
+      expect(input.value).toBe("21.098.765/4");
+
+      undo(input);
+      expect(input.value).toBe("32.109.876/54");
+
+      undo(input);
+      expect(input.value).toBe("43.210.987/654");
+
+      undo(input);
+      expect(input.value).toBe("43.210.987/6543");
+
+      undo(input);
+      expect(input.value).toBe("43.210.987/6543-2");
+
+      redo(input);
+      expect(input.value).toBe("43.210.987/6543");
+
+      redo(input);
+      expect(input.value).toBe("43.210.987/654");
+
+      redo(input);
+      expect(input.value).toBe("32.109.876/54");
+
+      redo(input);
+      expect(input.value).toBe("21.098.765/4");
+    });
+
+    it.todo("should handle undo and redo when a replace happens");
+    it.todo("should handle undo and redo when a blur happens");
+    it.todo("should handle undo and redo when a paste happens");
+
     it.todo("should handle selection positioning");
 
     it("should warn if the provided element isn't an input type text", () => {
       expect(console.warn).not.toHaveBeenCalled();
 
       const selector = "not-and-input";
-      finalMask.init(selector);
+      setupMask(selector);
 
       expect(console.warn).toHaveBeenCalledOnce();
       expect(console.warn).toHaveBeenCalledWith(
@@ -65,14 +165,14 @@ describe("Mask", () => {
 
       const h1 = appendH1();
       const h1Selector = "h1";
-      finalMask.init(h1Selector);
+      setupMask(h1Selector);
 
       expect(console.warn).toHaveBeenCalledTimes(2);
       expect(console.warn).toHaveBeenCalledWith(
         `[final-mask]: Associated input element for "${h1Selector}" is not an input`,
       );
 
-      finalMask.init(h1 as HTMLInputElement);
+      setupMask(h1 as HTMLInputElement);
 
       expect(console.warn).toHaveBeenCalledTimes(3);
       expect(console.warn).toHaveBeenCalledWith(
@@ -84,6 +184,17 @@ describe("Mask", () => {
   describe.todo("getUnmaskedValue");
   describe.todo("getMaskedValue");
 });
+
+const mask = "##.###.###/####-##";
+function setupInput(onInput?: Mock) {
+  const input = appendInput();
+  setupMask(input, onInput);
+  return input;
+}
+
+function setupMask(input: string | HTMLInputElement, onInput?: Mock) {
+  Mask.setup(mask, input, { onInput });
+}
 
 function appendH1() {
   const h1 = document.createElement("h1");
@@ -107,13 +218,25 @@ function setValue(input: HTMLInputElement, value: string) {
 }
 
 function deleteBackward(input: HTMLInputElement) {
-  const value = input.value;
+  const { value } = input;
+  input.dispatchEvent(new InputEvent("beforeinput", { inputType: "deleteContentForward" }));
+
   input.value = value.substring(0, value.length - 1);
   input.dispatchEvent(new InputEvent("input", { inputType: "deleteContentBackward" }));
 }
 
 function deleteForward(input: HTMLInputElement) {
-  const value = input.value;
+  const { value } = input;
+  input.dispatchEvent(new InputEvent("beforeinput", { inputType: "deleteContentForward" }));
+
   input.value = value.substring(1, value.length);
   input.dispatchEvent(new InputEvent("input", { inputType: "deleteContentForward" }));
+}
+
+function undo(input: HTMLInputElement) {
+  input.dispatchEvent(new InputEvent("input", { inputType: "historyUndo" }));
+}
+
+function redo(input: HTMLInputElement) {
+  input.dispatchEvent(new InputEvent("input", { inputType: "historyRedo" }));
 }
