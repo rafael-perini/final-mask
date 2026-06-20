@@ -3,6 +3,7 @@ import Formatter from "@/utils/format/formatter.ts";
 
 interface initOptions {
   onInput?: (e?: InputEvent) => unknown;
+  onBeforeInput?: (e?: InputEvent) => unknown;
 }
 
 export default class Mask {
@@ -31,37 +32,38 @@ export default class Mask {
       );
     }
 
+    input.onbeforeinput = (event) => {
+      this.handleBeforeInput(event);
+      options.onBeforeInput?.(event);
+    };
+
     input.oninput = (event) => {
       this.handleInput(event);
       options.onInput?.(event);
-    };
-
-    input.onbeforeinput = (event) => {
-      this.handleBeforeInput(event);
     };
   }
 
   private handleBeforeInput(event: InputEvent) {
     const input = event.target;
     if (!this.isHTMLInputElement(input)) return;
-    if (this.isDeletionEvent(event)) this._recorder.insert(input.value);
+    if (this.isDeletionEvent(event)) this.record(input.value);
   }
 
   private handleInput(event: InputEvent) {
     const input = event.target;
     if (!this.isHTMLInputElement(input)) return;
     if (this.isUndoEvent(event)) return this.handleUndo(input);
-    if (this.isRedoEvent(event)) return this.insertText(input, this._recorder.redo());
+    if (this.isRedoEvent(event)) return this.insertText(input, this.redo());
 
     const { value } = input;
-    const maskedValue = this._formatter.mask(value);
+    const maskedValue = this.mask(value);
     this.insertText(input, maskedValue);
   }
 
   private handleUndo(input: HTMLInputElement) {
     const { value } = input;
-    if (this._recorder.getValue() !== value) this._recorder.insert(value);
-    this.insertText(input, this._recorder.undo());
+    if (this.currentRecord() !== value) this.record(value);
+    this.insertText(input, this.undo());
   }
 
   private isUndoEvent(event: InputEvent) {
@@ -78,6 +80,26 @@ export default class Mask {
 
   private insertText(input: HTMLInputElement, text: string) {
     input.setRangeText(text, 0, input.value.length, "end");
+  }
+
+  private mask(value: string) {
+    return this._formatter.mask(value);
+  }
+
+  private record(value: string) {
+    this._recorder.insert(value);
+  }
+
+  private currentRecord() {
+    return this._recorder.getValue();
+  }
+
+  private undo() {
+    return this._recorder.undo();
+  }
+
+  private redo() {
+    return this._recorder.redo();
   }
 
   private toString(selectorOrElement: string | HTMLElement) {
