@@ -35,6 +35,14 @@ describe("Formatter", () => {
       const partialValue = formatter.mask(unmaskedPhone);
       expect(partialValue).toBe(maskedPhone);
     });
+
+    it(" should handle masks that doesn't end with numbers", () => {
+      const maskedTime = "03:45 AM";
+      const unmaskedTime = "0345";
+
+      const partialValue = new Formatter("##:## AM").mask(unmaskedTime);
+      expect(partialValue).toBe(maskedTime);
+    });
   });
 
   describe("unmask", () => {
