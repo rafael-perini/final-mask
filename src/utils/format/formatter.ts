@@ -17,7 +17,7 @@ export default class Formatter {
       maskedValue = maskedValue.replace(/#/, number);
     }
 
-    maskedValue = maskedValue.replace(/(\d)\D+$/, "$1");
+    if (maskedValue.includes("#")) maskedValue = maskedValue.replace(/(\d)\D+$/, "$1");
 
     return maskedValue;
   }
