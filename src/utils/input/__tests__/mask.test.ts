@@ -6,44 +6,50 @@ describe("Mask", () => {
   const onBeforeInput = vi.fn();
   let input = setupInput();
 
-  describe("setup", () => {
-    beforeEach(() => {
-      input = setupInput({ onInput, onBeforeInput });
-    });
+  beforeEach(() => {
+    input = setupInput({ onInput, onBeforeInput });
+  });
 
+  describe("setup", () => {
+    it("should warn if the provided element isn't an input type text", () => {
+      expect(console.warn).not.toHaveBeenCalled();
+
+      const selector = "not-and-input";
+      setupMask(selector);
+
+      expect(console.warn).toHaveBeenCalledOnce();
+      expect(console.warn).toHaveBeenCalledWith(
+        `[final-mask]: Failed to find the associated input element for: ${selector}`,
+      );
+
+      const h1 = appendH1();
+      const h1Selector = "h1";
+      setupMask(h1Selector);
+
+      expect(console.warn).toHaveBeenCalledTimes(2);
+      expect(console.warn).toHaveBeenCalledWith(
+        `[final-mask]: Associated input element for "${h1Selector}" is not an input`,
+      );
+
+      setupMask(h1 as HTMLInputElement);
+
+      expect(console.warn).toHaveBeenCalledTimes(3);
+      expect(console.warn).toHaveBeenCalledWith(
+        `[final-mask]: Associated input element for "${h1?.outerHTML}" is not an input`,
+      );
+    });
+    it.todo("should handle selection positioning");
+  });
+
+  describe.todo("getUnmaskedValue");
+  describe.todo("getMaskedValue");
+
+  describe("common inputs", () => {
     it("should mask the inserted value", () => {
       const expectedValue = "12.345.678/9012-34";
       const unmaskedValue = "12345678901234";
       setValue(input, unmaskedValue);
       expect(input.value).toBe(expectedValue);
-    });
-
-    it("should be able to receive an input callback", () => {
-      const expectedValue = "12.678.345/9012-34";
-      const unmaskedValue = "12678345901234";
-      setValue(input, unmaskedValue);
-      expect(onInput).toHaveBeenCalledOnce();
-      expect(onInput).toHaveBeenCalledWith(expect.any(InputEvent));
-      expect(onInput).toHaveBeenCalledWith(expect.objectContaining({ target: input }));
-      expect(onInput).toHaveBeenCalledWith(
-        expect.objectContaining({
-          target: expect.objectContaining({ value: expectedValue }),
-        }),
-      );
-    });
-
-    it("should be able to receive a before input callback", () => {
-      const expectedValue = "34.126.783/4590-12";
-      const unmaskedValue = "34126783459012";
-      setValue(input, unmaskedValue);
-      expect(onBeforeInput).toHaveBeenCalledOnce();
-      expect(onBeforeInput).toHaveBeenCalledWith(expect.any(InputEvent));
-      expect(onBeforeInput).toHaveBeenCalledWith(expect.objectContaining({ target: input }));
-      expect(onBeforeInput).toHaveBeenCalledWith(
-        expect.objectContaining({
-          target: expect.objectContaining({ value: expectedValue }),
-        }),
-      );
     });
 
     it("should handle deletions", () => {
@@ -65,8 +71,10 @@ describe("Mask", () => {
       deleteForward(input);
       expect(input.value).toBe("23.456");
     });
+  });
 
-    it("should handle undo and redo when there's just typing", () => {
+  describe("undo and redo", () => {
+    it("should handle ordinary typing", () => {
       const firstValue = "12345678901234";
       const maskedFirstValue = "12.345.678/9012-34";
 
@@ -114,7 +122,7 @@ describe("Mask", () => {
       expect(input.value).toBe("");
     });
 
-    it("should handle undo and redo when a delete happens", () => {
+    it("should handle text deletions", () => {
       const firstValue = "43210987654321";
       const maskedFirstValue = "43.210.987/6543-21";
 
@@ -159,43 +167,40 @@ describe("Mask", () => {
       expect(input.value).toBe("21.098.765/4");
     });
 
-    it.todo("should handle undo and redo when a replace happens");
-    it.todo("should handle undo and redo when a blur happens");
-    it.todo("should handle undo and redo when a paste happens");
+    it.todo("should handle blur");
+    it.todo("should handle text replacements");
+    it.todo("should handle paste");
+  });
 
-    it.todo("should handle selection positioning");
-
-    it("should warn if the provided element isn't an input type text", () => {
-      expect(console.warn).not.toHaveBeenCalled();
-
-      const selector = "not-and-input";
-      setupMask(selector);
-
-      expect(console.warn).toHaveBeenCalledOnce();
-      expect(console.warn).toHaveBeenCalledWith(
-        `[final-mask]: Failed to find the associated input element for: ${selector}`,
+  describe("options", () => {
+    it("should be able to receive an input callback", () => {
+      const expectedValue = "12.678.345/9012-34";
+      const unmaskedValue = "12678345901234";
+      setValue(input, unmaskedValue);
+      expect(onInput).toHaveBeenCalledOnce();
+      expect(onInput).toHaveBeenCalledWith(expect.any(InputEvent));
+      expect(onInput).toHaveBeenCalledWith(expect.objectContaining({ target: input }));
+      expect(onInput).toHaveBeenCalledWith(
+        expect.objectContaining({
+          target: expect.objectContaining({ value: expectedValue }),
+        }),
       );
+    });
 
-      const h1 = appendH1();
-      const h1Selector = "h1";
-      setupMask(h1Selector);
-
-      expect(console.warn).toHaveBeenCalledTimes(2);
-      expect(console.warn).toHaveBeenCalledWith(
-        `[final-mask]: Associated input element for "${h1Selector}" is not an input`,
-      );
-
-      setupMask(h1 as HTMLInputElement);
-
-      expect(console.warn).toHaveBeenCalledTimes(3);
-      expect(console.warn).toHaveBeenCalledWith(
-        `[final-mask]: Associated input element for "${h1?.outerHTML}" is not an input`,
+    it("should be able to receive a before input callback", () => {
+      const expectedValue = "34.126.783/4590-12";
+      const unmaskedValue = "34126783459012";
+      setValue(input, unmaskedValue);
+      expect(onBeforeInput).toHaveBeenCalledOnce();
+      expect(onBeforeInput).toHaveBeenCalledWith(expect.any(InputEvent));
+      expect(onBeforeInput).toHaveBeenCalledWith(expect.objectContaining({ target: input }));
+      expect(onBeforeInput).toHaveBeenCalledWith(
+        expect.objectContaining({
+          target: expect.objectContaining({ value: expectedValue }),
+        }),
       );
     });
   });
-
-  describe.todo("getUnmaskedValue");
-  describe.todo("getMaskedValue");
 });
 
 interface SetupOptions {
