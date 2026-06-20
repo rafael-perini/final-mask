@@ -38,11 +38,10 @@ describe("Mask", () => {
         `[final-mask]: Associated input element for "${h1?.outerHTML}" is not an input`,
       );
     });
-    it.todo("should handle selection positioning");
   });
 
-  describe.todo("getUnmaskedValue");
   describe.todo("getMaskedValue");
+  describe.todo("getUnmaskedValue");
 
   describe("common inputs", () => {
     it("should mask the inserted value", () => {
@@ -167,9 +166,40 @@ describe("Mask", () => {
       expect(input.value).toBe("21.098.765/4");
     });
 
-    it.todo("should handle blur");
+    it("should handle blur", () => {
+      const firstValue = "78945612309876";
+
+      setValue(input, firstValue);
+      blurLeavingPage(input);
+
+      const secondValue = "87678945612309";
+      const maskedSecondValue = "87.678.945/6123-09";
+
+      setValue(input, secondValue);
+      undo(input);
+      expect(input.value).toBe("");
+
+      redo(input);
+      expect(input.value).toBe(maskedSecondValue);
+
+      const thirdValue = "86789456123";
+      const maskedThirdValue = "86.789.456/123";
+      setValue(input, thirdValue);
+
+      expect(getFocusedElement()).toBe(input);
+      blurToAnotherElement(input);
+      expect(getFocusedElement()).not.toBe(input);
+
+      const fourtValue = "8678945634512";
+      setValue(input, fourtValue);
+
+      undo(input);
+      expect(input.value).toBe(maskedThirdValue);
+    });
+
     it.todo("should handle text replacements");
     it.todo("should handle paste");
+    it.todo("should handle selection positioning");
   });
 
   describe("options", () => {
@@ -236,6 +266,7 @@ function appendInput() {
 
 function setValue(input: HTMLInputElement, value: string) {
   input.dispatchEvent(new InputEvent("beforeinput", { inputType: "insertText" }));
+  input.focus();
   input.value = value;
   input.dispatchEvent(new InputEvent("input", { inputType: "insertText" }));
 }
@@ -262,4 +293,22 @@ function undo(input: HTMLInputElement) {
 
 function redo(input: HTMLInputElement) {
   input.dispatchEvent(new InputEvent("input", { inputType: "historyRedo" }));
+}
+
+function blurLeavingPage(input: HTMLInputElement) {
+  input.dispatchEvent(new FocusEvent("blur"));
+}
+
+function blurToAnotherElement(input: HTMLInputElement) {
+  const inputs = document.querySelectorAll("input");
+  for (const differentInput of inputs) {
+    if (differentInput !== input) {
+      differentInput.focus();
+      return input.dispatchEvent(new FocusEvent("blur"));
+    }
+  }
+}
+
+function getFocusedElement() {
+  return document.activeElement;
 }
