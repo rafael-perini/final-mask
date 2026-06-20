@@ -9,6 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+
       - uses: voidzero-dev/setup-vp@v1
         with:
           node-version: "24"
