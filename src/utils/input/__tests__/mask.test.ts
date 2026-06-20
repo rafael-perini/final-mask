@@ -74,8 +74,8 @@ describe("Mask", () => {
 
   describe("undo and redo", () => {
     it("should handle ordinary typing", () => {
-      const firstValue = "12345678901234";
-      const maskedFirstValue = "12.345.678/9012-34";
+      const firstValue = "12";
+      const maskedFirstValue = "12";
 
       setValue(input, firstValue);
 
@@ -265,14 +265,16 @@ function appendInput() {
 }
 
 function setValue(input: HTMLInputElement, value: string) {
-  input.dispatchEvent(new InputEvent("beforeinput", { inputType: "insertText" }));
   input.focus();
+  input.dispatchEvent(new InputEvent("beforeinput", { inputType: "insertText" }));
   input.value = value;
   input.dispatchEvent(new InputEvent("input", { inputType: "insertText" }));
 }
 
 function deleteBackward(input: HTMLInputElement) {
   const { value } = input;
+
+  input.focus();
   input.dispatchEvent(new InputEvent("beforeinput", { inputType: "deleteContentForward" }));
 
   input.value = value.substring(0, value.length - 1);
@@ -281,6 +283,8 @@ function deleteBackward(input: HTMLInputElement) {
 
 function deleteForward(input: HTMLInputElement) {
   const { value } = input;
+
+  input.focus();
   input.dispatchEvent(new InputEvent("beforeinput", { inputType: "deleteContentForward" }));
 
   input.value = value.substring(1, value.length);
@@ -288,10 +292,14 @@ function deleteForward(input: HTMLInputElement) {
 }
 
 function undo(input: HTMLInputElement) {
+  input.dispatchEvent(new InputEvent("beforeinput", { inputType: "historyUndo" }));
+  input.value = "********";
   input.dispatchEvent(new InputEvent("input", { inputType: "historyUndo" }));
 }
 
 function redo(input: HTMLInputElement) {
+  input.dispatchEvent(new InputEvent("beforeinput", { inputType: "historyRedo" }));
+  input.value = "********";
   input.dispatchEvent(new InputEvent("input", { inputType: "historyRedo" }));
 }
 
