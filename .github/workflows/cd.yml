@@ -34,12 +34,17 @@ jobs:
     permissions:
       pages: write
       id-token: write
+      contents: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+      GH_TOKEN: ${{ github.token }}
     runs-on: ubuntu-latest
     needs: cd
     steps:
+      - name: Release
+        run: vpr release
+
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

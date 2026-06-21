@@ -28,6 +28,9 @@ export default defineConfig({
         command: "vp exec vitepress build docs",
         dependsOn: ["build"],
       },
+      release: {
+        command: "vp exec semantic-release",
+      },
     },
   },
   lint: {
