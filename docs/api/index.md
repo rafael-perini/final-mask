@@ -2,54 +2,49 @@
 outline: deep
 ---
 
-# Runtime API Examples
+# setup
 
-This page demonstrates usage of some of the runtime APIs provided by VitePress.
-
-The main `useData()` API can be used to access site, theme, and page data for the current page. It works in both `.md` and `.vue` files:
-
-```md
-<script setup>
-import { useData } from 'vitepress'
-
-const { theme, page, frontmatter } = useData()
-</script>
-
-## Results
-
-### Theme Data
-
-<pre>{{ theme }}</pre>
-
-### Page Data
-
-<pre>{{ page }}</pre>
-
-### Page Frontmatter
-
-<pre>{{ frontmatter }}</pre>
+```ts
+FinalMask.setup("###", "#input-id");
 ```
 
-<script setup>
-import { useData } from 'vitepress'
+Attach event listeners to manipulate the input respecting the provided mask.
 
-const { site, theme, page, frontmatter } = useData()
-</script>
+## Parameters
 
-## Results
+### mask
 
-### Theme Data
+`string`
 
-<pre>{{ theme }}</pre>
+String using `#` as numbers.
 
-### Page Data
+### selectorOrInputElement
 
-<pre>{{ page }}</pre>
+`string | HTMLInputElement`
 
-### Page Frontmatter
+String with the selector to find the input element or the input instance itself.
 
-<pre>{{ frontmatter }}</pre>
+### options
 
-## More
+`{ onInput: (event: InputEvent) => void, onBeforeInput: (event: InputEvent) => void }` = {}
 
-Check out the documentation for the [full list of runtime APIs](https://vitepress.dev/reference/runtime-api#usedata).
+Option to add callbacks after some events that might happen to the input element.
+
+## Example
+
+```html
+<label for="zip-code">ZIP Code: </label>
+<input type="text" id="zip-code" placeholder="00000-0000" />
+```
+
+```ts
+const options = {
+  onInput: (event: InputEvent) => {
+    /* Your code goes here. */
+  },
+  onBeforeInput: (event: InputEvent) => {
+    /* Your code goes here. */
+  },
+};
+FinalMask.setup("#####-####", "#zip-code", options);
+```

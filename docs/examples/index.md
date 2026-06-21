@@ -1,85 +1,39 @@
-# Markdown Extension Examples
+# Examples
 
-This page demonstrates some of the built-in markdown extensions provided by VitePress.
+To setup FinalMask, call it's `setup` method, providing it with a mask and the selector os instance of the input to be masked.
 
-## Syntax Highlighting
+```js
+import { FinalMask } from "final-mask";
 
-VitePress provides Syntax Highlighting powered by [Shiki](https://github.com/shikijs/shiki), with additional features like line-highlighting:
-
-**Input**
-
-````md
-```js{4}
-export default {
-  data () {
-    return {
-      msg: 'Highlighted!'
-    }
-  }
-}
-```
-````
-
-**Output**
-
-```js{4}
-export default {
-  data () {
-    return {
-      msg: 'Highlighted!'
-    }
-  }
-}
+FinalMask.setup("###.###.###.###", "#input-id");
 ```
 
-## Custom Containers
+## Demos
 
-**Input**
+<label for="first-input">Phone: </label>
+<input id="first-input" placeholder="+0 000 000-0000">
 
-```md
-::: info
-This is an info box.
-:::
+<label for="second-input">IPv4: </label>
+<input id="second-input" placeholder="000.000.000.000">
 
-::: tip
-This is a tip.
-:::
+<label for="third-input">ZIP Code: </label>
+<input id="third-input" placeholder="00000-0000">
 
-::: warning
-This is a warning.
-:::
+<label for="fourt-input">Date: </label>
+<input id="fourt-input" placeholder="00/00/0000">
 
-::: danger
-This is a dangerous warning.
-:::
+<label for="fifth-input">Time: </label>
+<input id="fifth-input" placeholder="00:00">
 
-::: details
-This is a details block.
-:::
-```
+<script setup>
+  import { onMounted } from "vue"
+  import { FinalMask } from "../../dist/"
 
-**Output**
-
-::: info
-This is an info box.
-:::
-
-::: tip
-This is a tip.
-:::
-
-::: warning
-This is a warning.
-:::
-
-::: danger
-This is a dangerous warning.
-:::
-
-::: details
-This is a details block.
-:::
-
-## More
-
-Check out the documentation for the [full list of markdown extensions](https://vitepress.dev/guide/markdown).
+  onMounted(() => {
+    FinalMask.setup("+# ### ###-####", "#first-input");
+    FinalMask.setup("###.###.###.###", "#second-input");
+    FinalMask.setup("#####-####", "#third-input");
+    FinalMask.setup("##/##/####", "#fourt-input");
+    FinalMask.setup("##:##", "#fifth-input");
+  });
+</script>

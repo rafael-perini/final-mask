@@ -39,7 +39,7 @@ export default defineConfig({
       "/api/": [
         {
           text: "API",
-          items: [{ text: "Callbacks", link: "/api/" }],
+          items: [{ text: "Setup", link: "/api/" }],
         },
       ],
     },

@@ -23,8 +23,8 @@ features:
     details: Just call the setup and FinalMask will work.
   - icon: ✌️
     title: Framework agnostic
-    details: Pick your flavor and plug it in using the available API callbacks.
+    details: Pick your flavor and plug it in using the available callbacks API.
   - icon: ❤️
     title: Browser friendly
-    details: Keeps edit history so you can undo/redo as usual.
+    details: Keeps edit history so you can undo and redo as usual.
 ---
