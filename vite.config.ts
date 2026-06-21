@@ -12,6 +12,24 @@ export default defineConfig({
     },
     exports: true,
   },
+  run: {
+    tasks: {
+      docs: {
+        command: "vp exec vitepress dev docs --host",
+        dependsOn: ["build"],
+        cache: false,
+      },
+      "docs:preview": {
+        command: "vp exec vitepress preview docs --host",
+        dependsOn: ["build"],
+        cache: false,
+      },
+      "pack:docs": {
+        command: "vp exec vitepress build docs",
+        dependsOn: ["build"],
+      },
+    },
+  },
   lint: {
     options: {
       typeAware: true,
