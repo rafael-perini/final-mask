@@ -2,6 +2,9 @@ name: CI
 
 on: pull_request
 
+permissions:
+  contents: read
+
 jobs:
   ci:
     name: Check and test
@@ -11,6 +14,8 @@ jobs:
     steps:
       - name: Setup repo
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Setup Vite+
         uses: voidzero-dev/setup-vp@v1
@@ -18,6 +23,9 @@ jobs:
           node-version: "24"
           cache: true
           run-install: true
+
+      - name: Validate PR commits with Commitlint
+        run: vp exec commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
       - name: Check
         run: vp check
