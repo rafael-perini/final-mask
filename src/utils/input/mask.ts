@@ -54,24 +54,21 @@ export default class Mask {
   private handleBeforeInput(event: InputEvent) {
     const input = event.target;
     if (!this.isHTMLInputElement(input)) return;
-    if (this.isDeletionEvent(event)) this.record(input.value);
+
+    const { value } = input;
+    if (this.isDeletionEvent(event)) return this.record(value);
+    if (this.isUndoEvent(event) && this.currentRecord() !== value) return this.record(value);
   }
 
   private handleInput(event: InputEvent) {
     const input = event.target;
     if (!this.isHTMLInputElement(input)) return;
-    if (this.isUndoEvent(event)) return this.handleUndo(input);
+    if (this.isUndoEvent(event)) return this.insertText(input, this.undo());
     if (this.isRedoEvent(event)) return this.insertText(input, this.redo());
 
     const { value } = input;
     const maskedValue = this.mask(value);
     this.insertText(input, maskedValue);
-  }
-
-  private handleUndo(input: HTMLInputElement) {
-    const { value } = input;
-    if (this.currentRecord() !== value) this.record(value);
-    this.insertText(input, this.undo());
   }
 
   private isUndoEvent(event: InputEvent) {
