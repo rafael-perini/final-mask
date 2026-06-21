@@ -61,13 +61,6 @@
     ]
   },
   "release": {
-    "branches": [
-      "main",
-      {
-        "name": "add-semantic-release",
-        "prerelease": true
-      }
-    ],
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
