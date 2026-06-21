@@ -9,16 +9,16 @@
     "mask",
     "vanilla"
   ],
-  "homepage": "https://github.com/author/library#readme",
+  "homepage": "https://github.com/rafael-perini/final-mask#readme",
   "bugs": {
-    "url": "https://github.com/author/library/issues"
+    "url": "https://github.com/rafael-perini/final-mask/issues"
   },
   "license": "MIT",
   "author": "Rafael Perini (https://github.com/rafael-perini)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/author/library.git",
-    "home": "git+https://github.com/author/library.git"
+    "url": "git+https://github.com/rafael-perini/final-mask.git",
+    "home": "git+https://github.com/rafael-perini/final-mask.git"
   },
   "files": [
     "dist"
@@ -49,10 +49,30 @@
     "@vitest/coverage-v8": "^4.1.9",
     "bumpp": "^11.1.0",
     "jsdom": "^29.1.1",
+    "semantic-release": "^25.0.5",
     "typescript": "^6.0.3",
     "vite-plus": "^0.2.1",
     "vitepress": "^1.6.4",
     "vue": "^3.5.38"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "release": {
+    "branches": [
+      "main",
+      {
+        "name": "add-semantic-release",
+        "prerelease": true
+      }
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/github"
+    ]
   },
   "packageManager": "pnpm@11.6.0"
 }
