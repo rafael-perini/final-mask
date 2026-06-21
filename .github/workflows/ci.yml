@@ -4,7 +4,7 @@ on: pull_request
 
 jobs:
   ci:
-    name: Check and Test
+    name: Check and test
 
     runs-on: ubuntu-latest
 
@@ -12,13 +12,12 @@ jobs:
       - name: Setup repo
         uses: actions/checkout@v7
 
-      - uses: voidzero-dev/setup-vp@v1
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1
         with:
           node-version: "24"
           cache: true
-
-      - name: Install
-        run: vp install
+          run-install: true
 
       - name: Check
         run: vp check
