@@ -53,7 +53,7 @@ export default class Mask {
   private handleBlur(event: FocusEvent) {
     const input = event.target;
     if (!this.isHTMLInputElement(input)) return;
-    if (!this.isFocused(input)) this.record(input.value);
+    if (!this.isFocused(input) && input.value !== this.currentRecord()) this.record(input.value);
   }
 
   private handleBeforeInput(event: InputEvent) {
