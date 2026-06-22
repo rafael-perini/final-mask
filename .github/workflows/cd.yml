@@ -21,6 +21,9 @@ jobs:
           cache: true
           run-install: true
 
+      - name: Release
+        run: vpr release
+
       - name: Pack
         run: vpr pack:docs
 
