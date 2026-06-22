@@ -30,6 +30,7 @@ export default defineConfig({
       },
       release: {
         command: "vp exec semantic-release",
+        dependsOn: ["build"],
       },
     },
   },
