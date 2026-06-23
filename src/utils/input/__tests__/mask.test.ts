@@ -46,7 +46,8 @@ describe("Mask", () => {
   });
 
   describe.todo("getMaskedValue");
-  describe.todo("getUnmaskedValue");
+  describe.todo("getValue");
+  describe.todo("setValue");
 
   describe("common inputs", () => {
     it("should mask the inserted value", () => {
@@ -205,8 +206,22 @@ describe("Mask", () => {
       expect(input.value).toBe(maskedThirdValue);
     });
 
+    it("should handle paste", () => {
+      const firstValue = "1";
+
+      pasteValue(input, firstValue);
+      pasteValue(input, firstValue);
+      pasteValue(input, firstValue);
+
+      undo(input);
+      expect(input.value).toBe(firstValue);
+      undo(input);
+      expect(input.value).toBe(firstValue);
+      undo(input);
+      expect(input.value).toBe("");
+    });
+
     it.todo("should handle text replacements");
-    it.todo("should handle paste");
     it.todo("should handle selection positioning");
   });
 
@@ -281,6 +296,13 @@ function setValue(input: HTMLInputElement, value: string) {
   input.dispatchEvent(new InputEvent("beforeinput", { inputType: "insertText" }));
   input.value = value;
   input.dispatchEvent(new InputEvent("input", { inputType: "insertText" }));
+}
+
+function pasteValue(input: HTMLInputElement, value: string) {
+  input.focus();
+  input.dispatchEvent(new InputEvent("beforeinput", { inputType: "insertFromPaste" }));
+  input.value = value;
+  input.dispatchEvent(new InputEvent("input", { inputType: "insertFromPaste" }));
 }
 
 function deleteBackward(input: HTMLInputElement) {
