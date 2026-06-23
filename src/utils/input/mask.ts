@@ -7,11 +7,14 @@ interface initOptions {
 }
 
 export default class Mask {
-  private _formatter: Formatter;
-  private _recorder = new Snapshot("");
+  private _formatter;
+  private _recorder;
+  private _mask;
 
   private constructor(...args: ConstructorParameters<typeof Formatter>) {
     this._formatter = new Formatter(...args);
+    this._recorder = new Snapshot("");
+    this._mask = args[0];
   }
 
   static setup(mask: string, selectorOrElement: string | HTMLInputElement, options?: initOptions) {
@@ -32,6 +35,8 @@ export default class Mask {
       );
     }
 
+    input.maxLength = this._mask.length;
+
     input.onblur = (event) => this.handleBlur(event);
 
     input.onbeforeinput = (event) => {
@@ -48,7 +53,7 @@ export default class Mask {
   private handleBlur(event: FocusEvent) {
     const input = event.target;
     if (!this.isHTMLInputElement(input)) return;
-    if (!this.isFocused(input) && input.value !== this.currentRecord()) this.record(input.value);
+    if (!this.isFocused(input)) this.record(input.value);
   }
 
   private handleBeforeInput(event: InputEvent) {
@@ -57,7 +62,7 @@ export default class Mask {
 
     const { value } = input;
     if (this.isDeletionEvent(event)) return this.record(value);
-    if (this.isUndoEvent(event) && this.currentRecord() !== value) return this.record(value);
+    if (this.isUndoEvent(event)) return this.record(value);
   }
 
   private handleInput(event: InputEvent) {
@@ -68,7 +73,10 @@ export default class Mask {
 
     const { value } = input;
     const maskedValue = this.mask(value);
-    this.insertText(input, maskedValue);
+    if (maskedValue !== value) {
+      if (!this.isDeletionEvent(event)) this.record(maskedValue);
+      this.insertText(input, maskedValue);
+    }
   }
 
   private isUndoEvent(event: InputEvent) {
@@ -96,7 +104,7 @@ export default class Mask {
   }
 
   private record(value: string) {
-    this._recorder.insert(value);
+    if (value !== this.currentRecord()) this._recorder.insert(value);
   }
 
   private currentRecord() {
