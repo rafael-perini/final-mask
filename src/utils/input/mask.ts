@@ -76,7 +76,13 @@ export default class Mask {
     if (maskedValue !== value) {
       if (!this.isDeletionEvent(event)) this.record(maskedValue);
       this.insertText(input, maskedValue);
+    } else if (this.isPasteEvent(event)) {
+      this.record(maskedValue, true);
     }
+  }
+
+  private isPasteEvent(event: InputEvent) {
+    return event.inputType.includes("Paste");
   }
 
   private isUndoEvent(event: InputEvent) {
@@ -103,8 +109,8 @@ export default class Mask {
     return this._formatter.mask(value);
   }
 
-  private record(value: string) {
-    if (value !== this.currentRecord()) this._recorder.insert(value);
+  private record(value: string, force?: boolean) {
+    if (value !== this.currentRecord() || force) this._recorder.insert(value);
   }
 
   private currentRecord() {
