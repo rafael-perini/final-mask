@@ -193,6 +193,8 @@ describe("Mask", () => {
       const fourtValue = "8678945634512";
       setValue(input, fourtValue);
 
+      blurToAnotherElement(input);
+
       undo(input);
       expect(input.value).toBe(maskedThirdValue);
     });
