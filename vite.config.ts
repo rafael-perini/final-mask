@@ -35,6 +35,19 @@ export default defineConfig({
     },
   },
   lint: {
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["../**", "./**", "."],
+              message: "Please use the '@/' alias for imports instead of relative paths.",
+            },
+          ],
+        },
+      ],
+    },
     options: {
       typeAware: true,
       typeCheck: true,
