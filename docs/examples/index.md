@@ -10,30 +10,76 @@ FinalMask.setup("###.###.###.###", "#input-id");
 
 ## Demos
 
-<label for="first-input">Phone: </label>
-<input id="first-input" placeholder="+0 000 000-0000">
+::: info Which mask do you need?
 
-<label for="second-input">IPv4: </label>
-<input id="second-input" placeholder="000.000.000.000">
+  <p v-for="(input, index) in inputs" :key="index">
+    <label :for="input.id">{{ input.label }}: </label>
+    <input :id="input.id" :placeholder="input.placeholder" />
+  </p>
+:::
 
-<label for="third-input">ZIP Code: </label>
-<input id="third-input" placeholder="00000-0000">
+::: details Need another example?
 
-<label for="fourt-input">Date: </label>
-<input id="fourt-input" placeholder="00/00/0000">
-
-<label for="fifth-input">Time: </label>
-<input id="fifth-input" placeholder="00:00">
+  <form @submit.prevent="addInput">
+    <label :for="maskId">Mask: </label>
+    <input v-model="mask" :id="maskId" placeholder="#### #### #### ####" required />
+    <label :for="labelId">Label: </label>
+    <input v-model="label" :id="labelId" placeholder="Credit Card" required />
+    <button type="submit">Add</button>
+  </form>
+:::
 
 <script setup>
-  import { onMounted } from "vue"
+  import { useId, onMounted, ref, nextTick } from "vue"
   import { FinalMask } from "../../dist/"
 
+  const inputs = ref([{
+    id: useId(),
+    label: 'Phone',
+    placeholder: '+0 000 000-0000',
+    mask: '+# ### ###-####'
+  },{
+    id: useId(),
+    label: 'IPv4',
+    placeholder: '000.000.000.000',
+    mask: '###.###.###.###'
+  },{
+    id: useId(),
+    label: 'ZIP Code',
+    placeholder: '00000-0000',
+    mask: '#####-####'
+  },{
+    id: useId(),
+    label: 'Date',
+    placeholder: '00/00/0000',
+    mask: '##/##/####'
+  },{
+    id: useId(),
+    label: 'Time',
+    placeholder: '00:00',
+    mask: '##:##'
+  }]);
+
   onMounted(() => {
-    FinalMask.setup("+# ### ###-####", "#first-input");
-    FinalMask.setup("###.###.###.###", "#second-input");
-    FinalMask.setup("#####-####", "#third-input");
-    FinalMask.setup("##/##/####", "#fourt-input");
-    FinalMask.setup("##:##", "#fifth-input");
+    inputs.value.forEach(input => FinalMask.setup(input.mask, `#${input.id}`));
   });
+  
+  const maskId = useId();
+  const labelId = useId();
+  const mask = ref("##/##/#### ##:##");
+  const label = ref("Date Time");
+  const newInputs = ref(0)
+
+  function addInput() {
+    const placeholder = mask.value.replaceAll('#', '0');
+    const id = `final-mask-id-${newInputs.value++}`
+
+    const newInput = { id, placeholder, mask: mask.value, label: label.value };
+    inputs.value.push(newInput)
+
+    mask.value = "";
+    label.value = "";
+
+    nextTick(() => FinalMask.setup(newInput.mask, `#${newInput.id}`))
+  }
 </script>
